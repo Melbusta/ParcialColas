@@ -56,20 +56,25 @@ public class Menú {
         try {
             System.out.print("Ingrese nombre: ");
             String nombre = sc.nextLine();
-
+    
             System.out.print("Ingrese cédula: ");
             String cedula = sc.nextLine();
-
+    
             System.out.print("Ingrese edad: ");
             int edad = sc.nextInt();
-
+    
             System.out.print("¿Es desplazado? (true/false): ");
             boolean esDesplazado = sc.nextBoolean();
-
+    
             System.out.print("Ingrese estrato (1-6): ");
             int estrato = sc.nextInt();
-
-            Registro reg = new Registro(nombre, nombre, edad, edad, esDesplazado, estrato);
+    
+            double auxilio = 0.0;
+            if (edad < 18) {
+                auxilio = calcularAuxilio(esDesplazado);
+            }
+    
+            Registro reg = new Registro(nombre, cedula, edad, auxilio, esDesplazado, estrato);
             censo.agregarRegistro(reg);
             System.out.println("Registro agregado correctamente.");
         } catch (NumberFormatException nfe) {
@@ -77,6 +82,12 @@ public class Menú {
         } catch (IllegalArgumentException iae) {
             System.out.println("Error de validación: " + iae.getMessage());
         }
+    }
+
+    private static double calcularAuxilio(boolean esDesplazado) {
+        double salarioMinimo = 1423500; 
+        double porcentaje = 0.8;
+        return esDesplazado ? salarioMinimo * porcentaje : 1138800;
     }
 
     private static void eliminarRegistro() {

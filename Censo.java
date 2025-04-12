@@ -6,7 +6,7 @@ public class Censo {
     private Queue<Registro> queue;
     private final String FILE_NAME = "censo.csv";
 
-    public void censo() {
+    public Censo() {
         queue = new LinkedList<>();
         cargarCenso();
     }
@@ -74,11 +74,11 @@ public class Censo {
                     String nombre = datos[0].trim();
                     String cedula = datos[1].trim();
                     int edad = Integer.parseInt(datos[2].trim());
-
+                    int auxilio = Integer.parseInt(datos[3].trim());
                     boolean esDesplazado = Boolean.parseBoolean(datos[4].trim());
                     int estrato = Integer.parseInt(datos[5].trim());
 
-                    Registro reg = new Registro(nombre, cedula, edad, edad, esDesplazado, estrato);
+                    Registro reg = new Registro(nombre, cedula, edad, auxilio, esDesplazado, estrato);
                     queue.add(reg);
                 } catch (NumberFormatException nfe) {
                     System.out.println("Error al procesar la línea: " + linea + " - " + nfe.getMessage());
@@ -106,7 +106,7 @@ public class Censo {
             }
             System.out.println("Exportación realizada con éxito en: " + ruta);
         } catch (IOException e) {
-            System.out.println("Error al exportar a CSV: " + e.getMessage());
+            System.out.println();
         }
     }
 
@@ -123,13 +123,14 @@ public class Censo {
                     String nombre = datos[0].trim();
                     String cedula = datos[1].trim();
                     int edad = Integer.parseInt(datos[2].trim());
+                    int auxilio = Integer.parseInt(datos[3].trim());
                     boolean esDesplazado = Boolean.parseBoolean(datos[4].trim());
                     int estrato = Integer.parseInt(datos[5].trim());
 
-                    Registro reg = new Registro(nombre, cedula, edad, edad, esDesplazado, estrato);
+                    Registro reg = new Registro(nombre, cedula, edad, auxilio, esDesplazado, estrato);
                     queue.add(reg);
                 } catch (Exception e) {
-                    System.out.println("Error al procesar la línea: " + linea + " - " + e.getMessage());
+                    System.out.println();
                 }
             }
             guardarCenso();
