@@ -52,7 +52,7 @@ public class MainCenso {
         System.out.print("Ingrese una opción: ");
     }
     
-    // Método para registrar un ciudadano.
+    // Lee los datos del ciudadano y lo registra.
     private static void registrarCiudadano(){
         try {
             System.out.print("Ingrese nombre: ");
@@ -80,7 +80,7 @@ public class MainCenso {
         }
     }
     
-    // Elimina (atiende) el registro que está en cabeza de la cola.
+    // Elimina (atiende) el ciudadano en la cabeza de la cola.
     private static void eliminarRegistro(){
         Registro reg = censo.eliminarRegistro();
         if(reg != null){
@@ -90,16 +90,16 @@ public class MainCenso {
         }
     }
     
-    // Exporta los datos a CSV.
+    // Exporta los datos a un archivo CSV definido por el usuario.
     private static void exportarDatos(){
-        System.out.print("Ingrese la ruta y nombre de archivo (por ejemplo, exportacion.csv): ");
+        System.out.print("Ingrese la ruta y nombre del archivo (por ejemplo, exportacion.csv): ");
         String ruta = sc.nextLine();
         censo.exportarAHCSV(ruta);
     }
     
-    // Importa datos desde un archivo CSV.
+    // Importa datos desde un archivo CSV definido por el usuario.
     private static void importarDatos(){
-        System.out.print("Ingrese la ruta y nombre de archivo (por ejemplo, importacion.csv): ");
+        System.out.print("Ingrese la ruta y nombre del archivo (por ejemplo, importacion.csv): ");
         String ruta = sc.nextLine();
         censo.importarDesdeCSV(ruta);
     }
