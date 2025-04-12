@@ -1,0 +1,120 @@
+import java.io.*;
+import java.util.LinkedList;
+import java.util.Queue;
+
+public class Censo {
+    private Queue<Registro> queue;
+    private final String SERIAL_FILE = "censo.dat";
+    
+    public Censo() {
+        queue = new LinkedList<>();
+        cargarCenso();
+    }
+    
+    // Agrega un registro y guarda la cola en archivo de serialización.
+    public void agregarRegistro(Registro reg) {
+        queue.add(reg);
+        guardarCenso();
+    }
+    
+    // Elimina (atiende) el registro en cabeza de la cola.
+    public Registro eliminarRegistro() {
+        if (!queue.isEmpty()) {
+            Registro reg = queue.poll();
+            guardarCenso();
+            return reg;
+        }
+        return null;
+    }
+    
+    // Muestra la información de todos los registros.
+    public void mostrarCenso() {
+        if (queue.isEmpty()) {
+            System.out.println("El censo está vacío.");
+        } else {
+            for (Registro reg : queue) {
+                System.out.println(reg);
+            }
+        }
+    }
+    
+    // Carga la cola de registros desde el archivo serializado (si existe).
+    @SuppressWarnings("unchecked")
+    private void cargarCenso() {
+        File file = new File(SERIAL_FILE);
+        if(file.exists()){
+            try (ObjectInputStream ois = new ObjectInputStream(new FileInputStream(file))) {
+                queue = (Queue<Registro>) ois.readObject();
+            } catch (Exception e) {
+                System.out.println("Error al cargar el censo: " + e.getMessage());
+                queue = new LinkedList<>();
+            }
+        }
+    }
+    
+    // Guarda la cola de registros en el archivo de serialización.
+    private void guardarCenso() {
+        try (ObjectOutputStream oos = new ObjectOutputStream(new FileOutputStream(SERIAL_FILE))) {
+            oos.writeObject(queue);
+        } catch(IOException e) {
+            System.out.println("Error al guardar el censo: " + e.getMessage());
+        }
+    }
+    
+    // Exporta los registros a un archivo CSV en el formato:
+    // nombre,cedula,edad,auxilio,esDesplazado,estrato
+    public void exportarAHCSV(String ruta) {
+        try (BufferedWriter bw = new BufferedWriter(new FileWriter(ruta))) {
+            // Escribir encabezados (opcional)
+            bw.write("nombre,cedula,edad,auxilio,esDesplazado,estrato");
+            bw.newLine();
+            // Iterar sobre la cola para exportar cada registro.
+            for (Registro reg : queue) {
+                String linea = String.format("%s,%s,%d,%.2f,%s,%d",
+                        reg.getNombre(),
+                        reg.getCedula(),
+                        reg.getEdad(),
+                        reg.getAuxilio(),
+                        reg.isEsDesplazado(),
+                        reg.getEstrato());
+                bw.write(linea);
+                bw.newLine();
+            }
+            System.out.println("Exportación realizada con éxito en: " + ruta);
+        } catch (IOException e) {
+            System.out.println("Error al exportar a CSV: " + e.getMessage());
+        }
+    }
+    
+    // Importa registros desde un archivo CSV. Se asume que el archivo tiene la cabecera.
+    public void importarDesdeCSV(String ruta) {
+        try (BufferedReader br = new BufferedReader(new FileReader(ruta))) {
+            String linea = br.readLine(); // Leer la cabecera y descartarla
+            while ((linea = br.readLine()) != null) {
+                String[] datos = linea.split(",");
+                if (datos.length < 6) {
+                    System.out.println("Línea con formato incorrecto: " + linea);
+                    continue;
+                }
+                try {
+                    String nombre = datos[0].trim();
+                    String cedula = datos[1].trim();
+                    int edad = Integer.parseInt(datos[2].trim());
+                    // El auxilio se calcula automáticamente en el constructor
+                    boolean esDesplazado = Boolean.parseBoolean(datos[4].trim());
+                    int estrato = Integer.parseInt(datos[5].trim());
+                    
+                    // Se crea el registro. No se usa el dato auxilio importado ya que se genera en el constructor.
+                    Registro reg = new Registro(nombre, cedula, edad, esDesplazado, estrato);
+                    queue.add(reg);
+                } catch (Exception e) {
+                    System.out.println("Error al procesar la línea: " + linea + " - " + e.getMessage());
+                }
+            }
+            guardarCenso();  // Guarda la cola actualizada después de importar.
+            System.out.println("Importación realizada con éxito desde: " + ruta);
+        } catch (IOException e) {
+            System.out.println("Error al importar desde CSV: " + e.getMessage());
+        }
+    }
+}
