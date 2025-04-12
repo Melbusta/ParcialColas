@@ -1,8 +1,4 @@
-import java.io.Serializable;
-
-public class Registro implements Serializable {
-    private static final long serialVersionUID = 1L;
-    
+public class Registro {
     private String nombre;
     private String cedula;
     private int edad;
@@ -31,16 +27,12 @@ public class Registro implements Serializable {
         this.esDesplazado = esDesplazado;
         this.estrato = estrato;
         
-        // Se asigna auxilio solo a los menores de edad.
-        if (edad < 18) {
-            final double SALARIO_MINIMO = 1000000;  // Puedes ajustar este valor.
-            this.auxilio = SALARIO_MINIMO * 0.8;
-        } else {
-            this.auxilio = 0;
-        }
+        // Se asigna auxilio solo a los menores de edad (edad < 18)
+        final double SALARIO_MINIMO = 1000000;
+        this.auxilio = (edad < 18) ? SALARIO_MINIMO * 0.8 : 0;
     }
     
-    // Métodos getters
+    // Métodos getter
     public String getNombre() {
         return nombre;
     }
